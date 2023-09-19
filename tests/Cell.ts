@@ -24,11 +24,11 @@ test("Sum of cells", () => {
   expect(A2.getValue()).toBe(42);
   expect(A3.getValue()).toBe(84);
 
-  A4.setValue("=A1+A2+A3");
+  A4.setValue("=A3*A3");
   A4.updateAllValues();
-  expect(A4.getValue()).toBe(168);
+  expect(A4.getValue()).toBe(84 * 84);
 
-  A5.setValue("=A1+A2*A3-A4");
+  A5.setValue("=SQRT(A4)");
   A5.updateAllValues();
-  expect(A5.getValue()).toBe(42 + 42 * 84 - 168);
+  expect(A5.getValue()).toBe(A3.getValue());
 });

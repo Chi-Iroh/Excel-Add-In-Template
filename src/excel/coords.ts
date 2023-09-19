@@ -6,6 +6,15 @@ export function isCoordValid(coord : string) : boolean {
     return EXCEL_COORD_REGEX.test(coord);
 }
 
+export function beginsWithValidCoord(str : string) : [boolean, number] {
+    const matches = /^[A-Z]+[0-9]+/i.exec(str);
+
+    if (matches == null) {
+        return [false, 0];
+    }
+    return [true, matches[0].length]
+}
+
 export function columnToIndex(column : string) : number {
     const length : number = column.length;
     const asciiCodeRightBeforeCapitalA : number = toAscii('A') - 1;

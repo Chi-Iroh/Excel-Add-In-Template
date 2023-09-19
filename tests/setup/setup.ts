@@ -1,7 +1,5 @@
 import { OfficeMockObject } from "office-addin-mock";
-import { coordToIndices } from "../../src/excel/coords";
-import { isDigit, isLetter } from "../../src/charType";
-import { stringIndexFindIf } from "../../src/utils";
+import { coordToIndices, beginsWithValidCoord } from "../../src/excel/coords";
 import { EXCEL_COLUMNS_MAX, EXCEL_ROWS_MAX } from "../../src/excel/limits";
 import * as math from "mathjs";
 
@@ -55,18 +53,17 @@ export class ExcelRangeMock {
   }
 
   private extractCellLocation(location : string) : string | undefined {
-    const digitIndex : number = stringIndexFindIf(location, isDigit);
-    if (!isLetter(location[0]) || digitIndex == -1) {
+    const [beginsWithCoord, length] : [boolean, number] = beginsWithValidCoord(location);
+    const isWholeString : boolean = length == location.length;
+
+    if (!beginsWithCoord) {
+      return undefined;
+    } else if (isWholeString) {
+      return location;
+    } else if (location[length] == '(') { // math function
       return undefined;
     }
-
-    const digitsPart : string = location.substring(digitIndex);
-    const isNotDigit = (char : string) => { return !isDigit(char); }
-    const nextNonDigitIndex = stringIndexFindIf(digitsPart, isNotDigit);
-    if (nextNonDigitIndex == -1) {
-      return location;
-    }
-    return location.substring(0, digitIndex + nextNonDigitIndex);
+    return location.substring(0, length);
   }
 
   private calculateSingleCell(rowIndex : number, columnIndex : number) : void {
@@ -81,15 +78,13 @@ export class ExcelRangeMock {
       const cellLocation : string | undefined = this.extractCellLocation(formula.substring(i));
 
       if (typeof cellLocation === "string") {
-        console.log(cellLocation);
         mathExpr += this.getOtherCellValueAsNumber(cellLocation).toString();
         i += cellLocation.length - 1;
       } else {
         mathExpr += formula[i];
       }
-      console.log(mathExpr)
     }
-    this.values[rowIndex][columnIndex] = math.evaluate(mathExpr);
+    this.values[rowIndex][columnIndex] = math.evaluate(mathExpr.toLowerCase()); // mathjs understands sqrt but not SQRT
   }
 
   public calculate() : void {
