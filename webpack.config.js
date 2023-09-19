@@ -99,6 +99,11 @@ module.exports = async (env, options) => {
         directory: path.join(__dirname, "dist"),
         publicPath: "/public",
       },
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+        "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+      },
       server: {
         type: "https",
         options: env.WEBPACK_BUILD || options.https !== undefined ? options.https : await getHttpsOptions(),
