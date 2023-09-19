@@ -1,0 +1,7 @@
+{
+    "preset": "ts-jest",
+    "testMatch": [ "**/*.ts" ],
+    "testPathIgnorePatterns": [ "tests/setup" ],
+    "roots": ["tests/"],
+    "verbose": true
+}
