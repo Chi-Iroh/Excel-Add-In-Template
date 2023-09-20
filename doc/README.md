@@ -1,4 +1,6 @@
-# Setup Office Add-In
+# <a id="top"></a> Setup Office Add-In
+### [Go to Microsoft auto-generated README](../README.md)
+
 ## Introduction and Configuration
 
 Office suite (Excel, Word etc..) supports add-ins, either in web or app mode (app is Windows-only).  
@@ -28,7 +30,7 @@ Using fdisk, here's the steps (assuming there's some unallocated space in a disk
 | :----- | :-----: | :---------: |
 | None | `sudo fdisk /dev/XXX` | Opens the disk.  |
 | `Command (m for help):` | `n` | Adds a new partition.  |
-| `Partition number (...):` | `[Enter]` | Sets the partition number to Y (entering another number is OK but doesn't make any difference except device filename). Will create later a device block named `/dev/sdaY` or `/dev/nvmeAnB/Y` depending of disk type. |
+| `Partition number (...):` | `[Enter]` | Sets the partition number to Y (entering another number than the one proposed is OK, it will only affect device filename). Will create later a device block named `/dev/sdaY` or `/dev/nvmeAnB/Y` depending of disk type. |
 | `First sector (...):` | `[Enter]` | Makes the partition begin right at the beginning of unallocated region in the disk. |
 | `Last sector, +sectors or +size (...):` | `+XM` or `+XG` | Reserves X megabytes or gigabytes. |
 | `Command (m for help):` | `t` | Partition type must be changed to be recognized by Windows. |
@@ -47,13 +49,13 @@ The partition is now ready to use.
 
 Firstly, Node.js must be installed.
 Then Yeoman will be used to generate the project, it must be installed alongside Office add-in generator like this : `npm install -g yo generator-office`.  
-Run yeoman : `yo office` (no need to create yourself the project directory, yeoman will do it).  
-It will let you choose between several project types (choose <ins>Excel Custom Functions using a Shared Runtime </ins>).  
+Run yeoman : `yo office` (no need to create the project directory by yourself, yeoman will do it).  
+It will let you choose between several project types : choose <ins>Excel Custom Functions using a Shared Runtime </ins>.  
 Then comes the language (JavaScript or TypeScript), the project name and the application supported (Word, Excel etc..).
 
 <img src="assets/Excel Add-in.png" alt="Custom add-in logo is on top right corner of Excel (in Home) -- Taskpane is on the right side.">
 
-Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both taskpane and custom functions support, whereas <ins>Office Add-in Task Pane project</ins> only provides a taskpane.
+Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a taskpane and custom functions, whereas <ins>Office Add-in Task Pane project</ins> only provides a taskpane.
 
 ## Configuring the compiler
 
@@ -68,8 +70,7 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both tas
 }
 ```
 
-## Excel API
-[Excel JavaScript API Reference](https://learn.microsoft.com/en-us/office/dev/add-ins/reference/overview/excel-add-ins-reference-overview)
+## [Excel JavaScript API Reference](https://learn.microsoft.com/en-us/office/dev/add-ins/reference/overview/excel-add-ins-reference-overview)
 
 ## Running Unit Tests
 `npm install --save-dev jest @types/jest ts-jest`  
@@ -95,6 +96,7 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both tas
     ...
     "scripts": {
         ...
+        "tests" : "jest",    // "npm run tests" to run jest.
         "tests" : "jest",    // "npm run tests" to run jest.
         ...
     }
@@ -141,7 +143,8 @@ const officeMock = {
 };
 
 const mock = new OfficeMockObject(officeMock);
-global.Office = mock as any; // as any is forced because the compiler will complain since the mock hasn't the exact same methods and members as the original Office class (here we didn't implement everything).
+global.Office = mock as any; // as any is forced because the compiler will complain
+// since the mock hasn't the exact same methods and members as the original Office class (here we didn't implement everything).
 
 // importing our test, after the mock so that Office will be found.
 import { helloworld } from "../src/taskpane/taskpane";
@@ -164,8 +167,47 @@ describe("Test", () => {
         global.Office = new OfficeMockObject(officeMock) as any;
         const helloworld = require("../src/taskpane/taskpane.ts");
         expect(helloworld.helloworld()).toBe("Hello, World !");
-    })
-})
+    }) // 'test' is mandatory and contains your assertions...
+}) // but 'describe' is optional and just groups some tests or other 'describe's. Nested 'describe's are useful for more accurate messages.
 ```
 Here the mock can be reinitialized or setup differently between tests.  
 [GitHub PR on OfficeDev repo](https://github.com/OfficeDev/Office-Addin-TaskPane/pull/136/files/bbd173c3185d39cf8b3ef6364ebf8dcec62f7347)
+
+## More on Unit Tests and Mocks
+
+As said previously, a mock is useful since it emulates an object, in this case because Excel API isn't available for testing.  
+So for testing purposes, a minimal implementation of Excel is provided in [tests/setup/setup.ts](../tests/setup/setup.ts).  
+This mainly includes `Excel.Range` class, with a global bidimensionnal array acting as Excel worksheet.  
+Constants `EXCEL_ROWS_MAX` and `EXCEL_COLUMNS_MAX` are redefined in this file to speed up tests, and thus can be changed again according to the needs.  
+A minimal expression interpreter is provided, permitting to test expressions like `=A1+A2*A3+SQRT(A4)` (within the limits of what is implemented by Math.js).  
+Here's how looks unit tests using [setup.ts](../tests/setup/setup.ts) mocks :
+```ts
+// tests/someTest.ts
+import "./setup/setup";
+import { Cell } from "../src/cell/Cell"; // if needed, maybe accompanied with some other imports
+
+test("someTest", () => {
+  // Excel.RequestContext() simulates 'context' from src/taskpane/taskpane.ts
+  const worksheet = new Excel.RequestContext().workbook.worksheets.getActiveWorksheet();
+  const A1 = new Cell(worksheet, "A1");
+
+  A1.setValue(1);
+  A1.updateAllValues(); // explanation below
+  expect(A1.getValue()).toBe(1);
+  expect(new Cell(worksheet, "A1")).toBe(1); // the new instance retrieves the new value of A1
+})
+```
+
+To simulate an Excel worksheet, there's a global bidimensionnal array (of either strings or numbers) in setup.ts.  
+When `CellInstance.setValue(x)` is called, the internal Excel.Range object is updated, but only locally.  
+To update the global array, one needs to call `CellInstance.updateAllValues()` if manipulating a `Cell` instance, or `ExcelRangeInstance.updateAllValues()` when directly using `Excel.Range` (`Cell` performs updating by calling `Excel.Range`'s mock method).  
+Note: Forgetting to call `.updateAllValues()` before an assertion is very likely to make the test fail.  
+
+## Requesting an API and dealing with CORS
+
+Using a web API implies making requests to a (maybe external) server.  
+For security reasons, most web browsers prevents a script (JavaScript or TypeScript backend) from requesting an external URL (an URL which is not in the same machine as the script).  
+Whatever server it is, that means the owner didn't enable CORS, intentionally or not (if not, one should contact him).  
+More details in [Mozilla Documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).  
+
+### [Go back to top](#top)
