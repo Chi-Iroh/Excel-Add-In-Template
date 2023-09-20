@@ -3,7 +3,7 @@
 
 <br>
 
-### Setup hook
+### Setup Hook
 
 To enable the commit message checking hook : `ln -T hooks/prepare-commit-msg .git/hooks/prepare-commit-msg`.  
 
@@ -14,11 +14,11 @@ This document will explain how to create one, step by step.
 A dual boot (Windows 10 / Ubuntu 22.04 LTS) was used but steps shouldn't be OS-dependant.  
 
 
-## Optional Step : Creating a partition for testing purposes ([skip](#after-partition))
+## Optional Step : Creating a Partition for Testing Purposes ([skip](#after-partition))
 
 In a dual boot context, it is interesting to make a partition which can be accessed from both Windows and another OS, so that the add-in can be tested easily on multiple platforms and in web or app mode.  
 
-### Partition requirements
+### Partition Requirements
 
 The filesystem must support multiple OSes :
 * NTFS : recent, Windows and Linux only
@@ -30,7 +30,7 @@ To shrink a partition and make space for this one, follow [this guide](https://a
 
 A partition can be created either using a GUI (not covered here) or in the terminal (fdisk and mkfs are explained).  
 
-### Creating the partition (Linux + fdisk)
+### Creating the Partition (Linux + fdisk)
 
 Using fdisk, here's the steps (assuming there's some unallocated space in a disk) :  
 
@@ -46,7 +46,7 @@ Using fdisk, here's the steps (assuming there's some unallocated space in a disk
 | `Partition type or alias (type L to list all):` | `11` (Microsoft basic data) | Partition will be recognized and automatically mounted on Windows. When typing L to see all the types, it opens a vim-like list which must be exited by entering q. |
 | `Command (m for help):` | `w` | Applies the changes onto the disk. |
 
-### Creating the filesystem (Linux + mkfs)
+### Creating the Filesystem (Linux + mkfs)
 
 The partition is created but cannot be used until it has a filesystem :
 * NTFS : `mkfs.ntfs [-L LABEL] [-f]` : -f is for quick format (full format is long)
@@ -66,7 +66,7 @@ Then comes the language (JavaScript or TypeScript), the project name and the app
 
 Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a taskpane and custom functions, whereas <ins>Office Add-in Task Pane project</ins> only provides a taskpane.  
 
-## Configuring the compiler
+## Configuring the Compiler
 
 ```json
 // tsconfig.json
@@ -221,7 +221,7 @@ When `CellInstance.setValue(x)` is called, the internal Excel.Range object is up
 To update the global array, one needs to call `CellInstance.updateAllValues()` if manipulating a `Cell` instance, or `ExcelRangeInstance.updateAllValues()` when directly using `Excel.Range` (`Cell` performs updating by calling `Excel.Range`'s mock method).  
 Note: Forgetting to call `.updateAllValues()` before an assertion is very likely to make the test fail.  
 
-## Requesting an API and dealing with CORS
+## Requesting an API and Dealing with CORS
 
 Using a web API implies making requests to a (maybe external) server.  
 For security reasons, most web browsers prevents a script (JavaScript or TypeScript backend) from requesting an external URL (an URL which is not in the same machine as the script).  
@@ -229,5 +229,59 @@ Whatever server it is, that means the owner didn't enable CORS, intentionally or
 Useful resources :
 * [Mozilla documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
 * [Setting up CORS on the most common servers](https://enable-cors.org/server.html)
+
+## Common Errors and How to Fix Them
+
+### How to Completely Reset and Reload an Add-In ? <a id="reset-add-in"></a>
+
+Excel in the browser makes debugging harder, as it shows cryptic errors quite often, but many of them aren't related to the add-in's code.  
+While the reason why these errors are triggered isn't clear, it's luckily straightforward to suppress them.  
+
+* Browser-only : Clear website cookies and data (example on Firefox)
+   <img src="assets/sharepoint%20clear%20cookies%20and%20data.png" alt="Near URL bar, click on the locker and then 'Clear cookies and site data'.">
+* Kill all instances of the server
+* * Linux : `killall webpack`
+* * Windows : `taskkill /f /im node.exe`
+* Start again webpack using `npm start[:web]`
+
+### `Cannot access manifest URL at https://127.0.0.1:3000/manifest.xml. Please ensure the url is accessible`
+
+This error usually shows up due to a misconfiguration of webpack.  
+Check the existence of `Access-Control-Allow-Origin` and if the server is running on port 3000.  
+
+```js
+// webpack.config.js
+const urlDev = "https://localhost:3000/";
+...
+module.exports = async (env, options) => {
+  ...
+  const config = {
+    ...
+    devServer: {
+      ...
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+    }
+  }
+}
+```
+
+### `currentUpdate is undefined`
+
+<img src="assets/error%20currentUpdate%20is%20undefined.png" alt="Error traceback">
+
+This one sometimes happens when modifying a source file and then saving it : most of the time all works fine, webpack rebuilds and Excel doesn't complain, but the rest of the time it fails with this.  
+It seems to mean that Excel hadn't correctly loaded everything, so just refresh the page, and if it doesn't fix that, [follow these instructions](#reset-add-in).  
+
+### My Add-In is Displayed Multiple Times !
+
+That's just an artifact which doesn't impact the code.  
+A [complete reset](#reset-add-in) is needed to fix this.  
+
+### Another Errors Shows up but Doesn't Seem Related to my Code !
+
+Check once more if your code is ok, then [reset the add-in](#reset-add-in).  
+If it breaks again, it's probably your fault, otherwise go to [Github issues](https://github.com/OfficeDev/Excel-Custom-Functions/issues) to look for information or create an issue.  
 
 ### [Go back to top](#top)
