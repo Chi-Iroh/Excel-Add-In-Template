@@ -99,7 +99,7 @@ module.exports = async (env, options) => {
         publicPath: "/public",
       },
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "*"
       },
       server: {
         type: "https",
