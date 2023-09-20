@@ -1,10 +1,9 @@
 # Generic README by Microsoft
-### [Go to specific README](./doc/README.md)
+## [Go to specific README](./doc/README.md)
 
 <br>
-<br>
 
-# Custom functions in Excel
+## Custom functions in Excel
 
 Custom functions enable you to add new functions to Excel by defining those functions in JavaScript as part of an add-in. Users within Excel can access custom functions just as they would any native function in Excel, such as `SUM()`.  
 

@@ -1,8 +1,10 @@
 # <a id="top"></a> Setup Office Add-In
-### [Go to Microsoft auto-generated README](../README.md)
+## [Go to Microsoft auto-generated README](../README.md)
 
 <br>
-<br>
+
+### Setup hook
+To enable the commit message checking hook : `ln -T hooks/prepare-commit-msg .git/hooks/prepare-commit-msg`.  
 
 ## Introduction and Configuration
 
