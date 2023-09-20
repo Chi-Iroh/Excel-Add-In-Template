@@ -1,6 +1,9 @@
 # <a id="top"></a> Setup Office Add-In
 ### [Go to Microsoft auto-generated README](../README.md)
 
+<br>
+<br>
+
 ## Introduction and Configuration
 
 Office suite (Excel, Word etc..) supports add-ins, either in web or app mode (app is Windows-only).  
