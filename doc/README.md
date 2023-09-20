@@ -208,6 +208,8 @@ Note: Forgetting to call `.updateAllValues()` before an assertion is very likely
 Using a web API implies making requests to a (maybe external) server.  
 For security reasons, most web browsers prevents a script (JavaScript or TypeScript backend) from requesting an external URL (an URL which is not in the same machine as the script).  
 Whatever server it is, that means the owner didn't enable CORS, intentionally or not (if not, one should contact him).  
-More details in [Mozilla Documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).  
+Useful resources :
+* [Mozilla documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+* [Setting up CORS on the most common servers](https://enable-cors.org/server.html)
 
 ### [Go back to top](#top)
