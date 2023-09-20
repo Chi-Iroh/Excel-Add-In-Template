@@ -36,11 +36,10 @@ module.exports = async (env, options) => {
       rules: [
         {
           test: /\.ts$/,
-          exclude: [ /node_modules/, /tests/ ],
+          exclude: /node_modules/,
           use: {
             loader: "babel-loader",
             options: {
-              exclude: [ "tests/*.ts" ],
               presets: ["@babel/preset-typescript"],
             },
           },
@@ -101,8 +100,6 @@ module.exports = async (env, options) => {
       },
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-        "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
       },
       server: {
         type: "https",
