@@ -4,32 +4,35 @@
 <br>
 
 ### Setup hook
+
 To enable the commit message checking hook : `ln -T hooks/prepare-commit-msg .git/hooks/prepare-commit-msg`.  
 
 ## Introduction and Configuration
 
 Office suite (Excel, Word etc..) supports add-ins, either in web or app mode (app is Windows-only).  
 This document will explain how to create one, step by step.  
-A dual boot (Windows 10 / Ubuntu 22.04 LTS) was used but steps shouldn't be OS-dependant.
+A dual boot (Windows 10 / Ubuntu 22.04 LTS) was used but steps shouldn't be OS-dependant.  
 
 
 ## Optional Step : Creating a partition for testing purposes ([skip](#after-partition))
 
-In a dual boot context, it is interesting to make a partition which can be accessed from both Windows and another OS, so that the add-in can be tested easily on multiple platforms and in web or app mode.
+In a dual boot context, it is interesting to make a partition which can be accessed from both Windows and another OS, so that the add-in can be tested easily on multiple platforms and in web or app mode.  
 
 ### Partition requirements
+
 The filesystem must support multiple OSes :
 * NTFS : recent, Windows and Linux only
 * FAT32 : older, but supported almost anywhere (including MacOS)
 
-Partition size hasn't to be very big, <ins>a few gigabytes</ins> seem to be more than enough.
+Partition size hasn't to be very big, <ins>a few gigabytes</ins> seem to be more than enough.  
 
-To shrink a partition and make space for this one, follow [this guide](https://access.redhat.com/articles/1196333) (Linux + e2fsck + resize2fs).
+To shrink a partition and make space for this one, follow [this guide](https://access.redhat.com/articles/1196333) (Linux + e2fsck + resize2fs).  
 
-A partition can be created either using a GUI (not covered here) or in the terminal (fdisk and mkfs are explained).
+A partition can be created either using a GUI (not covered here) or in the terminal (fdisk and mkfs are explained).  
 
 ### Creating the partition (Linux + fdisk)
-Using fdisk, here's the steps (assuming there's some unallocated space in a disk) :
+
+Using fdisk, here's the steps (assuming there's some unallocated space in a disk) :  
 
 | Prompt | Command | Explanation |
 | :----- | :-----: | :---------: |
@@ -44,11 +47,12 @@ Using fdisk, here's the steps (assuming there's some unallocated space in a disk
 | `Command (m for help):` | `w` | Applies the changes onto the disk. |
 
 ### Creating the filesystem (Linux + mkfs)
+
 The partition is created but cannot be used until it has a filesystem :
 * NTFS : `mkfs.ntfs [-L LABEL] [-f]` : -f is for quick format (full format is long)
 * FAT32 : `mkfs.fat -F 32 [-n LABEL]`
 
-The partition is now ready to use.
+The partition is now ready.  
 
 ## <a id="after-partition"></a> Generating Project Tree
 
@@ -56,11 +60,11 @@ Firstly, Node.js must be installed.
 Then Yeoman will be used to generate the project, it must be installed alongside Office add-in generator like this : `npm install -g yo generator-office`.  
 Run yeoman : `yo office` (no need to create the project directory by yourself, yeoman will do it).  
 It will let you choose between several project types : choose <ins>Excel Custom Functions using a Shared Runtime </ins>.  
-Then comes the language (JavaScript or TypeScript), the project name and the application supported (Word, Excel etc..).
+Then comes the language (JavaScript or TypeScript), the project name and the application supported (Word, Excel etc..).  
 
 <img src="assets/Excel Add-in.png" alt="Custom add-in logo is on top right corner of Excel (in Home) -- Taskpane is on the right side.">
 
-Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a taskpane and custom functions, whereas <ins>Office Add-in Task Pane project</ins> only provides a taskpane.
+Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a taskpane and custom functions, whereas <ins>Office Add-in Task Pane project</ins> only provides a taskpane.  
 
 ## Configuring the compiler
 
@@ -78,6 +82,7 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a t
 ## [Excel JavaScript API Reference](https://learn.microsoft.com/en-us/office/dev/add-ins/reference/overview/excel-add-ins-reference-overview)
 
 ## Running Unit Tests
+
 `npm install --save-dev jest @types/jest ts-jest`  
 * `jest` : Unit test framework (Javascript)  
 * `ts-jest` : Typescript support  
@@ -113,6 +118,7 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a t
 ### Troubleshoot : `ReferenceError: Office / Excel is not defined`
 
 This error may be triggered by Jest when you test a function which is implemented in a file which contains `Office` or `Excel` in the global namespace (not in a function nor a class, or in a function which is called in the global namespace).  
+
 ```typescript
 // Yeoman's auto-generated src/taskpane/taskpane.ts
 Office.onReady((info) => {
@@ -122,14 +128,18 @@ Office.onReady((info) => {
 }
 ```
 
-Jest (and any other unit test framework like `mocha`) can't find Office.js library because it's a single file in Microsoft's servers :
+Jest (and any other unit test framework like `mocha`) can't find Office.js library because it's a single file in Microsoft's servers :  
+
 ```html
 <!-- src/commands/commands.html -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
 ```
+
 Microsoft then released a package named `office-addin-mock` (must be installed with `npm install --save-dev`) which will provide a mock for Office, Excel and other classes.  
-A mock is a fake object which overrides the original one's behaviour. In this situation it can help a lot , we may make a mock of an Excel worksheet and give it a 2D array of numbers, and then test our logic on it without using a real file.  
+A mock is a fake object which overrides the original one's behaviour.  
+In this situation it can help a lot , we may make a mock of an Excel worksheet and give it a bidimensionnal array of numbers, and then test our logic on it without using a real file.  
 Here's how is an unit test :  
+
 ```typescript
 // tests/helloworld.ts
 import { OfficeMockObject } from "office-addin-mock";
@@ -162,7 +172,8 @@ describe("Test", () => {
 ```
 
 Note: If the tested function is in a file without Office, Excel or something like that in the global namespace, it's not needed to create the mock nor move the import at the end.  
-Also if you need to reset the mock between two tests, it may be better to use `require(...)` inside the test :
+Also if you need to reset the mock between two tests, it may be better to use `require(...)` inside the test :  
+
 ```typescript
 import { OfficeMockObject } from "office-addin-mock";
 const officeMock = ...;
@@ -175,6 +186,7 @@ describe("Test", () => {
     }) // 'test' is mandatory and contains your assertions...
 }) // but 'describe' is optional and just groups some tests or other 'describe's. Nested 'describe's are useful for more accurate messages.
 ```
+
 Here the mock can be reinitialized or setup differently between tests.  
 [GitHub PR on OfficeDev repo](https://github.com/OfficeDev/Office-Addin-TaskPane/pull/136/files/bbd173c3185d39cf8b3ef6364ebf8dcec62f7347)
 
@@ -185,7 +197,8 @@ So for testing purposes, a minimal implementation of Excel is provided in [tests
 This mainly includes `Excel.Range` class, with a global bidimensionnal array acting as Excel worksheet.  
 Constants `EXCEL_ROWS_MAX` and `EXCEL_COLUMNS_MAX` are redefined in this file to speed up tests, and thus can be changed again according to the needs.  
 A minimal expression interpreter is provided, permitting to test expressions like `=A1+A2*A3+SQRT(A4)` (within the limits of what is implemented by Math.js).  
-Here's how looks unit tests using [setup.ts](../tests/setup/setup.ts) mocks :
+Here's how looks unit tests using [setup.ts](../tests/setup/setup.ts) mocks :  
+
 ```ts
 // tests/someTest.ts
 import "./setup/setup";
