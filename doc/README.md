@@ -40,7 +40,7 @@ Using fdisk, here's the steps (assuming there's some unallocated space in a disk
 | `Last sector, +sectors or +size (...):` | `+XM` or `+XG` | Reserves X megabytes or gigabytes. |
 | `Command (m for help):` | `t` | Partition type must be changed to be recognized by Windows. |
 | `Partition number (...):` | `[Enter] or [partition number]` | Selects the partition number X. |
-| `Partition type or alias (type L to list all):` | `11` (be careful to updates) | Partition is now of type "Microsoft basic data". When typing L to see all the types, it opens a vim-like list which must be exited by entering q. |
+| `Partition type or alias (type L to list all):` | `11` (Microsoft basic data) | Partition will be recognized and automatically mounted on Windows. When typing L to see all the types, it opens a vim-like list which must be exited by entering q. |
 | `Command (m for help):` | `w` | Applies the changes onto the disk. |
 
 ### Creating the filesystem (Linux + mkfs)
