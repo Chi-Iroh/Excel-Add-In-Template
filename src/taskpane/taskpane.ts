@@ -10,6 +10,11 @@ import { Direction } from "../cell/CellLocation";
 import { handleError } from "../utils";
 import { getWholeWorksheetRange } from "../excel/utils";
 
+// Adding Promise support for browsers which don't implement them.
+if (!window.Promise) {
+    window.Promise = Office.Promise as any;
+}
+
 Office.onReady((info) => {
     if (info.host === Office.HostType.Excel) {
         document.getElementById("sideload-msg")!.style.display = "none";
