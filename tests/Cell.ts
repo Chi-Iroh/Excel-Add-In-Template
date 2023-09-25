@@ -18,17 +18,17 @@ test("Sum of cells", () => {
   A3.setValue("=A1+A2");
   A3.updateAllValues();
 
-  expect(A1.getValue()).toBe(42);
-  expect(new Cell(worksheet, "A1").getValue()).toBe(42)
+  expect(A1.computeValue()).toBe(42);
+  expect(new Cell(worksheet, "A1").computeValue()).toBe(42)
 
-  expect(A2.getValue()).toBe(42);
-  expect(A3.getValue()).toBe(84);
+  expect(A2.computeValue()).toBe(42);
+  expect(A3.computeValue()).toBe(84);
 
   A4.setValue("=A3*A3");
   A4.updateAllValues();
-  expect(A4.getValue()).toBe(84 * 84);
+  expect(A4.computeValue()).toBe(84 * 84);
 
   A5.setValue("=SQRT(A4)");
   A5.updateAllValues();
-  expect(A5.getValue()).toBe(A3.getValue());
+  expect(A5.computeValue()).toBe(A3.computeValue());
 });

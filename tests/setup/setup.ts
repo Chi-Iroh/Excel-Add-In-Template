@@ -1,5 +1,5 @@
 import { OfficeMockObject } from "office-addin-mock";
-import { coordToIndices, beginsWithValidCoord } from "../../src/excel/coords";
+import { coordsToIndices, beginsWithValidCoords } from "../../src/excel/coords";
 import { EXCEL_COLUMNS_MAX, EXCEL_ROWS_MAX } from "../../src/excel/limits";
 import * as math from "mathjs";
 
@@ -21,15 +21,15 @@ export class ExcelRangeMock {
     const dotsIndex : number = location.indexOf(":");
     if (dotsIndex != -1) {
       const topLeftCell : string = location.substring(0, dotsIndex);
-      const topLeftIndices = coordToIndices(topLeftCell);
+      const topLeftIndices = coordsToIndices(topLeftCell);
       const bottomRightCell : string = location.substring(dotsIndex);
-      const bottomRightIndices = coordToIndices(bottomRightCell);
+      const bottomRightIndices = coordsToIndices(bottomRightCell);
       this.topLeftRowIndex = topLeftIndices[0] as number;
       this.topLeftColumnIndex = topLeftIndices[1] as number;
       this.bottomRightRowIndex = bottomRightIndices[0] as number;
       this.bottomRightColumnIndex = bottomRightIndices[1] as number;
     } else {
-      const indices = coordToIndices(location);
+      const indices = coordsToIndices(location);
       this.topLeftRowIndex = indices[0] as number;
       this.topLeftColumnIndex = indices[1] as number;
       this.bottomRightRowIndex = indices[0] as number;
@@ -53,7 +53,7 @@ export class ExcelRangeMock {
   }
 
   private extractCellLocation(location : string) : string | undefined {
-    const [beginsWithCoord, length] : [boolean, number] = beginsWithValidCoord(location);
+    const [beginsWithCoord, length] : [boolean, number] = beginsWithValidCoords(location);
     const isWholeString : boolean = length == location.length;
 
     if (!beginsWithCoord) {

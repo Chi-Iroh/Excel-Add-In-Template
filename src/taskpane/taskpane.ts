@@ -3,52 +3,61 @@
  * See LICENSE in the project root for license information.
  */
 
-/* global console, document, Excel, Office */
-
 import { Cell } from "../cell/Cell";
 import { Direction } from "../cell/CellLocation";
-import { handleError } from "../utils";
+import { displayErrorOnTaskpane } from "./utils";
 import { getWholeWorksheetRange } from "../excel/utils";
 
-// Adding Promise support for browsers which don't implement them.
+/**
+ * Adding Promise support for browsers which don't implement them.
+ */
 if (!window.Promise) {
     window.Promise = Office.Promise as any;
 }
 
+/**
+ * Initializing HTML components
+ */
 Office.onReady((info) => {
     if (info.host === Office.HostType.Excel) {
         document.getElementById("sideload-msg")!.style.display = "none";
         document.getElementById("app-body")!.style.display = "flex";
-        document.getElementById("run")!.onclick = run;
+        document.getElementById("run")!.onclick = main;
     }
 });
 
-function fibonacci(context : Excel.RequestContext) {
+/**
+ * Computes the first 27 terms of the fibonacci series on column A.
+ * @param context Excel context
+ */
+function fibonacci(context : Excel.RequestContext) : void {
     const currentWorksheet : Excel.Worksheet = context.workbook.worksheets.getActiveWorksheet();
     let first : Cell = new Cell(currentWorksheet, "A1");
     let second : Cell = new Cell(currentWorksheet, "A2");
+
     first.setValue(1);
     second.setValue(1);
+
     for (let i = 0; i < 25; i++) {
         const third = second.nextCell(1, Direction.Down);
         if (third == null) {
             return;
         }
-
-        third.setValue(`=${first.getLocation()} + ${second.getLocation()}`);
+        third.setValue(`=${first.getLocation()}+${second.getLocation()}`);
         first = second;
         second = third;
     }
 }
-async function run() {
+
+async function main() {
     await Excel.run(async (context : Excel.RequestContext) => {
         const currentWorksheet : Excel.Worksheet = context.workbook.worksheets.getActiveWorksheet();
 
         try {
             fibonacci(context);
         } catch (error) {
-            console.error(error)
-            handleError(error as Error);
+            console.error(error);
+            displayErrorOnTaskpane(error as Error); // catch (error : Error) is ill-formed, hence the cast
         }
 
         const wholeRange = getWholeWorksheetRange(currentWorksheet);

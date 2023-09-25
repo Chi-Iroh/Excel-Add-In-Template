@@ -61,6 +61,5 @@ export function increment(incrementBy: number, invocation: CustomFunctions.Strea
  */
 export function logMessage(message: string) : string {
   console.log(message);
-
   return message;
 }
