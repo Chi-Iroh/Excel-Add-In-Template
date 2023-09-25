@@ -71,7 +71,7 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a t
 
 ## Configuring the Compiler
 
-```json
+```typescript
 // tsconfig.json
 {
     "compilerOptions": {
@@ -93,7 +93,7 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a t
   Note that you need to import them when using `@jest/globals`, but not with `@types/jest`.  
   Note that `@types/jest` may not be up-to-date (but still very recent), contrary to `@jest/globals` which is the latest version.
 
-```json
+```typescript
 // jest.config.json
 {
     "preset": "ts-jest",        // Typescript support
@@ -103,7 +103,7 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a t
 }
 ```
 
-```json
+```typescript
 // package.json
 {
     ...
@@ -202,7 +202,7 @@ Constants `EXCEL_ROWS_MAX` and `EXCEL_COLUMNS_MAX` are redefined in this file to
 A minimal expression interpreter is provided, permitting to test expressions like `=A1+A2*A3+SQRT(A4)` (within the limits of what is implemented by Math.js).  
 Here's how looks unit tests using setup.ts mocks :  
 
-```ts
+```typescript
 // tests/someTest.ts
 import "./setup/setup";
 import { Cell } from "../src/cell/Cell"; // if needed, maybe accompanied with some other imports
@@ -252,7 +252,7 @@ While the reason why these errors are triggered isn't clear, it's luckily straig
 This error usually shows up due to a misconfiguration of webpack.  
 Check the existence of `Access-Control-Allow-Origin` and if the server is running on port 3000.  
 
-```js
+```javascript
 // webpack.config.js
 const urlDev = "https://localhost:3000/";
 ...
