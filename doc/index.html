@@ -12,24 +12,169 @@
 <div class="col-content">
 <div class="tsd-page-title">
 <h2>excel-addin-template</h2></div>
-<section class="tsd-panel-group tsd-index-group">
-<section class="tsd-panel tsd-index-panel">
-<h3 class="tsd-index-heading uppercase">Index</h3>
-<section class="tsd-index-section">
-<h3 class="tsd-index-heading">Modules</h3>
-<div class="tsd-index-list"><a href="modules/cell_Cell.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>cell/<wbr/>Cell</span></a>
-<a href="modules/cell_CellLocation.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>cell/<wbr/>Cell<wbr/>Location</span></a>
-<a href="modules/charType.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>char<wbr/>Type</span></a>
-<a href="modules/commands_commands.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>commands/commands</span></a>
-<a href="modules/excel_coords.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>excel/coords</span></a>
-<a href="modules/excel_limits.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>excel/limits</span></a>
-<a href="modules/excel_utils.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>excel/utils</span></a>
-<a href="modules/functions_functions.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>functions/functions</span></a>
-<a href="modules/helloworld.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>helloworld</span></a>
-<a href="modules/taskpane_taskpane.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>taskpane/taskpane</span></a>
-<a href="modules/taskpane_utils.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>taskpane/utils</span></a>
-<a href="modules/utils.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg><span>utils</span></a>
-</div></section></section></section></div>
+<div class="tsd-panel tsd-typography"><a id="md:-setup-office-add-in" class="tsd-anchor"></a><h1><a href="#md:-setup-office-add-in"><a id="top"></a> Setup Office Add-In</a></h1><a id="md:go-to-microsoft-auto-generated-readme" class="tsd-anchor"></a><h2><a href="#md:go-to-microsoft-auto-generated-readme"><a href="#Microsoft-README">Go to Microsoft auto-generated README</a></a></h2><a id="md:gitea-doc" class="tsd-anchor"></a><h2><a href="#md:gitea-doc"><a href="#gitea-doc">Gitea doc</a></a></h2><br>
+
+<a id="md:setup-hook" class="tsd-anchor"></a><h3><a href="#md:setup-hook">Setup Hook</a></h3><p>To enable the commit message checking hook : <code>./hooks/setup.sh</code>.<br><b>Important:</b> This script only can be executed in <ins>project root</ins> or <ins>hooks</ins> directory.  </p>
+<a id="md:introduction-and-configuration" class="tsd-anchor"></a><h2><a href="#md:introduction-and-configuration">Introduction and Configuration</a></h2><p>Office suite (Excel, Word etc..) supports add-ins, either in web or app mode (app is Windows-only).<br>This document will explain how to create one, step by step.<br>A dual boot (Windows 10 / Ubuntu 22.04 LTS) was used but steps shouldn&#39;t be OS-dependant.  </p>
+<a id="md:optional-step--creating-a-partition-for-testing-purposes-skip" class="tsd-anchor"></a><h2><a href="#md:optional-step--creating-a-partition-for-testing-purposes-skip">Optional Step : Creating a Partition for Testing Purposes (<a href="#after-partition">skip</a>)</a></h2><p>In a dual boot context, it is interesting to make a partition which can be accessed from both Windows and another OS, so that the add-in can be tested easily on multiple platforms and in web or app mode.  </p>
+<a id="md:partition-requirements" class="tsd-anchor"></a><h3><a href="#md:partition-requirements">Partition Requirements</a></h3><p>The filesystem must support multiple OSes :</p>
+<ul>
+<li>NTFS : recent, Windows and Linux only</li>
+<li>FAT32 : older, but supported almost anywhere (including MacOS)</li>
+</ul>
+<p>Partition size hasn&#39;t to be very big, <ins>a few gigabytes</ins> seem to be more than enough.  </p>
+<p>To shrink a partition and make space for this one, follow <a href="https://access.redhat.com/articles/1196333">this guide</a> (Linux + e2fsck + resize2fs).  </p>
+<p>A partition can be created either using a GUI (not covered here) or in the terminal (fdisk and mkfs are explained).  </p>
+<a id="md:creating-the-partition-linux--fdisk" class="tsd-anchor"></a><h3><a href="#md:creating-the-partition-linux--fdisk">Creating the Partition (Linux + fdisk)</a></h3><p>Using fdisk, here&#39;s the steps (assuming there&#39;s some unallocated space in a disk) :  </p>
+<table>
+<thead>
+<tr>
+<th align="left">Prompt</th>
+<th align="center">Command</th>
+<th align="center">Explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">None</td>
+<td align="center"><code>sudo fdisk /dev/XXX</code></td>
+<td align="center">Opens the disk.</td>
+</tr>
+<tr>
+<td align="left"><code>Command (m for help):</code></td>
+<td align="center"><code>n</code></td>
+<td align="center">Adds a new partition.</td>
+</tr>
+<tr>
+<td align="left"><code>Partition number (...):</code></td>
+<td align="center"><code>[Enter]</code></td>
+<td align="center">Sets the partition number to Y (entering another number than the one proposed is OK, it will only affect device filename). Will create later a device block named <code>/dev/sdaY</code> or <code>/dev/nvmeAnB/Y</code> depending of disk type.</td>
+</tr>
+<tr>
+<td align="left"><code>First sector (...):</code></td>
+<td align="center"><code>[Enter]</code></td>
+<td align="center">Makes the partition begin right at the beginning of unallocated region in the disk.</td>
+</tr>
+<tr>
+<td align="left"><code>Last sector, +sectors or +size (...):</code></td>
+<td align="center"><code>+XM</code> or <code>+XG</code></td>
+<td align="center">Reserves X megabytes or gigabytes.</td>
+</tr>
+<tr>
+<td align="left"><code>Command (m for help):</code></td>
+<td align="center"><code>t</code></td>
+<td align="center">Partition type must be changed to be recognized by Windows.</td>
+</tr>
+<tr>
+<td align="left"><code>Partition number (...):</code></td>
+<td align="center"><code>[Enter] or [partition number]</code></td>
+<td align="center">Selects the partition number X.</td>
+</tr>
+<tr>
+<td align="left"><code>Partition type or alias (type L to list all):</code></td>
+<td align="center"><code>11</code> (Microsoft basic data)</td>
+<td align="center">Partition will be recognized and automatically mounted on Windows. When typing L to see all the types, it opens a vim-like list which must be exited by entering q.</td>
+</tr>
+<tr>
+<td align="left"><code>Command (m for help):</code></td>
+<td align="center"><code>w</code></td>
+<td align="center">Applies the changes onto the disk.</td>
+</tr>
+</tbody></table>
+<a id="md:creating-the-filesystem-linux--mkfs" class="tsd-anchor"></a><h3><a href="#md:creating-the-filesystem-linux--mkfs">Creating the Filesystem (Linux + mkfs)</a></h3><p>The partition is created but cannot be used until it has a filesystem :</p>
+<ul>
+<li>NTFS : <code>mkfs.ntfs [-L LABEL] [-f]</code> : -f is for quick format (full format is long)</li>
+<li>FAT32 : <code>mkfs.fat -F 32 [-n LABEL]</code></li>
+</ul>
+<p>The partition is now ready.  </p>
+<a id="md:-generating-project-tree" class="tsd-anchor"></a><h2><a href="#md:-generating-project-tree"><a id="after-partition"></a> Generating Project Tree</a></h2><p>Firstly, Node.js must be installed.
+Then Yeoman will be used to generate the project, it must be installed alongside Office add-in generator like this : <code>npm install -g yo generator-office</code>.<br>Run yeoman : <code>yo office</code> (no need to create the project directory by yourself, yeoman will do it).<br>It will let you choose between several project types : choose <ins>Excel Custom Functions using a Shared Runtime </ins>.<br>Then comes the language (JavaScript or TypeScript), the project name and the application supported (Word, Excel etc..).  </p>
+<img src="assets/doc//Excel Add-in.png" alt="Custom add-in logo is on top right corner of Excel (in Home) -- Taskpane is on the right side.">
+
+<p>Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a taskpane and custom functions, whereas <ins>Office Add-in Task Pane project</ins> only provides a taskpane.  </p>
+<a id="md:configuring-the-compiler" class="tsd-anchor"></a><h2><a href="#md:configuring-the-compiler">Configuring the Compiler</a></h2><pre><code class="language-json"><span class="hl-0">// tsconfig.json</span><br/><span class="hl-1">{</span><br/><span class="hl-1">    </span><span class="hl-2">&quot;compilerOptions&quot;</span><span class="hl-1">: {</span><br/><span class="hl-1">        </span><span class="hl-2">&quot;strict&quot;</span><span class="hl-1">: </span><span class="hl-3">true</span><span class="hl-1">,     </span><span class="hl-0">// More type-checking</span><br/><span class="hl-1">        </span><span class="hl-2">&quot;forceConsistentCasingInFileNames&quot;</span><span class="hl-1">: </span><span class="hl-3">true</span><span class="hl-1">,   </span><span class="hl-0">// Some OSes (like Windows) treat lowercase and uppercase characters in the same way, this options forces to use the exact name and casing for compatibility.</span><br/><span class="hl-1">        </span><span class="hl-4">...</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">}</span>
+</code><button>Copy</button></pre>
+<a id="md:excel-javascript-api-reference" class="tsd-anchor"></a><h2><a href="#md:excel-javascript-api-reference"><a href="https://learn.microsoft.com/en-us/office/dev/add-ins/reference/overview/excel-add-ins-reference-overview">Excel JavaScript API Reference</a></a></h2><a id="md:running-unit-tests" class="tsd-anchor"></a><h2><a href="#md:running-unit-tests">Running Unit Tests</a></h2><p><code>npm install --save-dev jest @types/jest ts-jest</code>  </p>
+<ul>
+<li><code>jest</code> : Unit test framework (Javascript)  </li>
+<li><code>ts-jest</code> : Typescript support  </li>
+<li><code>@types/jest</code> or <code>@jest/globals</code> : Functions (<code>test</code>, <code>expect</code> etc..).<br>Note that you need to import them when using <code>@jest/globals</code>, but not with <code>@types/jest</code>.<br>Note that <code>@types/jest</code> may not be up-to-date (but still very recent), contrary to <code>@jest/globals</code> which is the latest version.</li>
+</ul>
+<pre><code class="language-json"><span class="hl-0">// jest.config.json</span><br/><span class="hl-1">{</span><br/><span class="hl-1">    </span><span class="hl-2">&quot;preset&quot;</span><span class="hl-1">: </span><span class="hl-5">&quot;ts-jest&quot;</span><span class="hl-1">,        </span><span class="hl-0">// Typescript support</span><br/><span class="hl-1">    </span><span class="hl-2">&quot;testMatch&quot;</span><span class="hl-1">: [ </span><span class="hl-5">&quot;**/*.ts&quot;</span><span class="hl-1"> ], </span><span class="hl-0">// Test all .ts files...</span><br/><span class="hl-1">    </span><span class="hl-2">&quot;roots&quot;</span><span class="hl-1">: [</span><span class="hl-5">&quot;tests/&quot;</span><span class="hl-1">],        </span><span class="hl-0">// in &quot;tests&quot; directory</span><br/><span class="hl-1">    </span><span class="hl-2">&quot;verbose&quot;</span><span class="hl-1">: </span><span class="hl-3">true</span><span class="hl-1">             </span><span class="hl-0">// Adds log for each tets</span><br/><span class="hl-1">}</span>
+</code><button>Copy</button></pre>
+<pre><code class="language-json"><span class="hl-0">// package.json</span><br/><span class="hl-1">{</span><br/><span class="hl-1">    </span><span class="hl-4">...</span><br/><span class="hl-1">    </span><span class="hl-2">&quot;scripts&quot;</span><span class="hl-1">: {</span><br/><span class="hl-1">        </span><span class="hl-4">...</span><br/><span class="hl-1">        </span><span class="hl-2">&quot;tests&quot;</span><span class="hl-1"> : </span><span class="hl-5">&quot;jest&quot;</span><span class="hl-1">,    </span><span class="hl-0">// &quot;npm run tests&quot; to run jest.</span><br/><span class="hl-1">        </span><span class="hl-2">&quot;tests&quot;</span><span class="hl-1"> : </span><span class="hl-5">&quot;jest&quot;</span><span class="hl-1">,    </span><span class="hl-0">// &quot;npm run tests&quot; to run jest.</span><br/><span class="hl-1">        </span><span class="hl-4">...</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">}</span>
+</code><button>Copy</button></pre>
+<p><a href="https://jestjs.io/docs/api">Jest Testing API</a>  </p>
+<a id="md:troubleshoot--referenceerror-office--excel-is-not-defined" class="tsd-anchor"></a><h3><a href="#md:troubleshoot--referenceerror-office--excel-is-not-defined">Troubleshoot : <code>ReferenceError: Office / Excel is not defined</code></a></h3><p>This error may be triggered by Jest when you test a function which is implemented in a file which contains <code>Office</code> or <code>Excel</code> in the global namespace (not in a function nor a class, or in a function which is called in the global namespace).  </p>
+<pre><code class="language-typescript"><span class="hl-0">// Yeoman&#39;s auto-generated src/taskpane/taskpane.ts</span><br/><span class="hl-6">Office</span><span class="hl-1">.</span><span class="hl-7">onReady</span><span class="hl-1">((</span><span class="hl-6">info</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-8">if</span><span class="hl-1"> (</span><span class="hl-6">info</span><span class="hl-1">.</span><span class="hl-6">host</span><span class="hl-1"> === </span><span class="hl-6">Office</span><span class="hl-1">.</span><span class="hl-6">HostType</span><span class="hl-1">.</span><span class="hl-6">Excel</span><span class="hl-1">) {</span><br/><span class="hl-1">        ...</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">}</span>
+</code><button>Copy</button></pre>
+<p>Jest (and any other unit test framework like <code>mocha</code>) can&#39;t find Office.js library because it&#39;s a single file in Microsoft&#39;s servers :  </p>
+<pre><code class="language-html"><span class="hl-0">&lt;!-- src/commands/commands.html --&gt;</span><br/><span class="hl-1">    </span><span class="hl-9">&lt;</span><span class="hl-10">script</span><span class="hl-11"> </span><span class="hl-12">type</span><span class="hl-11">=</span><span class="hl-13">&quot;text/javascript&quot;</span><span class="hl-11"> </span><span class="hl-12">src</span><span class="hl-11">=</span><span class="hl-13">&quot;https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js&quot;</span><span class="hl-9">&gt;&lt;/</span><span class="hl-10">script</span><span class="hl-9">&gt;</span>
+</code><button>Copy</button></pre>
+<p>Microsoft then released a package named <code>office-addin-mock</code> (must be installed with <code>npm install --save-dev</code>) which will provide a mock for Office, Excel and other classes.<br>A mock is a fake object which overrides the original one&#39;s behaviour.<br>In this situation it can help a lot , we may make a mock of an Excel worksheet and give it a bidimensionnal array of numbers, and then test our logic on it without using a real file.<br>Here&#39;s how is an unit test :  </p>
+<pre><code class="language-typescript"><span class="hl-0">// tests/helloworld.ts</span><br/><span class="hl-8">import</span><span class="hl-1"> { </span><span class="hl-6">OfficeMockObject</span><span class="hl-1"> } </span><span class="hl-8">from</span><span class="hl-1"> </span><span class="hl-5">&quot;office-addin-mock&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-0">// Overriding methods according to the needs.</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-14">officeMock</span><span class="hl-1"> = {</span><br/><span class="hl-1">  </span><span class="hl-6">workbook:</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-6">range:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-6">address:</span><span class="hl-1"> </span><span class="hl-5">&quot;C2:G3&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    </span><span class="hl-7">getSelectedRange</span><span class="hl-6">:</span><span class="hl-1"> </span><span class="hl-3">function</span><span class="hl-1"> () {</span><br/><span class="hl-1">      </span><span class="hl-8">return</span><span class="hl-1"> </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-6">range</span><span class="hl-1">;</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">  </span><span class="hl-7">onReady</span><span class="hl-6">:</span><span class="hl-1"> </span><span class="hl-3">async</span><span class="hl-1"> </span><span class="hl-3">function</span><span class="hl-1"> () {}</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-14">mock</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-7">OfficeMockObject</span><span class="hl-1">(</span><span class="hl-6">officeMock</span><span class="hl-1">);</span><br/><span class="hl-6">global</span><span class="hl-1">.</span><span class="hl-6">Office</span><span class="hl-1"> = </span><span class="hl-6">mock</span><span class="hl-1"> </span><span class="hl-8">as</span><span class="hl-1"> </span><span class="hl-15">any</span><span class="hl-1">; </span><span class="hl-0">// as any is forced because the compiler will complain</span><br/><span class="hl-0">// since the mock hasn&#39;t the exact same methods and members as the original Office class (here we didn&#39;t implement everything).</span><br/><br/><span class="hl-0">// importing our test, after the mock so that Office will be found.</span><br/><span class="hl-8">import</span><span class="hl-1"> { </span><span class="hl-6">helloworld</span><span class="hl-1"> } </span><span class="hl-8">from</span><span class="hl-1"> </span><span class="hl-5">&quot;../src/taskpane/taskpane&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-7">describe</span><span class="hl-1">(</span><span class="hl-5">&quot;Test&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-7">test</span><span class="hl-1">(</span><span class="hl-5">&quot;Hello, World&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {                    </span><span class="hl-0">// it(&quot;Hello, World&quot;, ...) also exists and behaves exactly as &#39;test&#39;</span><br/><span class="hl-1">      </span><span class="hl-7">expect</span><span class="hl-1">(</span><span class="hl-7">helloworld</span><span class="hl-1">()).</span><span class="hl-7">toBe</span><span class="hl-1">(</span><span class="hl-5">&quot;Hello, World !&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">    });</span><br/><span class="hl-1">})</span>
+</code><button>Copy</button></pre>
+<p>Note: If the tested function is in a file without Office, Excel or something like that in the global namespace, it&#39;s not needed to create the mock nor move the import at the end.<br>Also if you need to reset the mock between two tests, it may be better to use <code>require(...)</code> inside the test :  </p>
+<pre><code class="language-typescript"><span class="hl-8">import</span><span class="hl-1"> { </span><span class="hl-6">OfficeMockObject</span><span class="hl-1"> } </span><span class="hl-8">from</span><span class="hl-1"> </span><span class="hl-5">&quot;office-addin-mock&quot;</span><span class="hl-1">;</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-14">officeMock</span><span class="hl-1"> = ...;</span><br/><br/><span class="hl-7">describe</span><span class="hl-1">(</span><span class="hl-5">&quot;Test&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-7">test</span><span class="hl-1">(</span><span class="hl-5">&quot;Hello, World&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-6">global</span><span class="hl-1">.</span><span class="hl-6">Office</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-7">OfficeMockObject</span><span class="hl-1">(</span><span class="hl-6">officeMock</span><span class="hl-1">) </span><span class="hl-8">as</span><span class="hl-1"> </span><span class="hl-15">any</span><span class="hl-1">;</span><br/><span class="hl-1">        </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-14">helloworld</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-5">&quot;../src/taskpane/taskpane.ts&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">        </span><span class="hl-7">expect</span><span class="hl-1">(</span><span class="hl-6">helloworld</span><span class="hl-1">.</span><span class="hl-7">helloworld</span><span class="hl-1">()).</span><span class="hl-7">toBe</span><span class="hl-1">(</span><span class="hl-5">&quot;Hello, World !&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">    }) </span><span class="hl-0">// &#39;test&#39; is mandatory and contains your assertions...</span><br/><span class="hl-1">}) </span><span class="hl-0">// but &#39;describe&#39; is optional and just groups some tests or other &#39;describe&#39;s. Nested &#39;describe&#39;s are useful for more accurate messages.</span>
+</code><button>Copy</button></pre>
+<p>Here the mock can be reinitialized or setup differently between tests.<br><a href="https://github.com/OfficeDev/Office-Addin-TaskPane/pull/136/files/bbd173c3185d39cf8b3ef6364ebf8dcec62f7347">GitHub PR on OfficeDev repo</a></p>
+<a id="md:more-on-unit-tests-and-mocks" class="tsd-anchor"></a><h2><a href="#md:more-on-unit-tests-and-mocks">More on Unit Tests and Mocks</a></h2><p>As said previously, a mock is useful since it emulates an object, in this case because Excel API isn&#39;t available for testing.<br>So for testing purposes, a minimal implementation of Excel is provided in <a href="../tests/setup/setup.ts">tests/setup/setup.ts</a>.<br>This mainly includes <code>Excel.Range</code> class, with a global bidimensionnal array acting as Excel worksheet.<br>Constants <code>EXCEL_ROWS_MAX</code> and <code>EXCEL_COLUMNS_MAX</code> are redefined in this file to speed up tests, and thus can be changed again according to the needs.<br>A minimal expression interpreter is provided, permitting to test expressions like <code>=A1+A2*A3+SQRT(A4)</code> (within the limits of what is implemented by Math.js).<br>Here&#39;s how looks unit tests using <a href="../tests/setup/setup.ts">setup.ts</a> mocks :  </p>
+<pre><code class="language-ts"><span class="hl-0">// tests/someTest.ts</span><br/><span class="hl-8">import</span><span class="hl-1"> </span><span class="hl-5">&quot;./setup/setup&quot;</span><span class="hl-1">;</span><br/><span class="hl-8">import</span><span class="hl-1"> { </span><span class="hl-6">Cell</span><span class="hl-1"> } </span><span class="hl-8">from</span><span class="hl-1"> </span><span class="hl-5">&quot;../src/cell/Cell&quot;</span><span class="hl-1">; </span><span class="hl-0">// if needed, maybe accompanied with some other imports</span><br/><br/><span class="hl-7">test</span><span class="hl-1">(</span><span class="hl-5">&quot;someTest&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-0">// Excel.RequestContext() simulates &#39;context&#39; from src/taskpane/taskpane.ts</span><br/><span class="hl-1">  </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-14">worksheet</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-6">Excel</span><span class="hl-1">.</span><span class="hl-7">RequestContext</span><span class="hl-1">().</span><span class="hl-6">workbook</span><span class="hl-1">.</span><span class="hl-6">worksheets</span><span class="hl-1">.</span><span class="hl-7">getActiveWorksheet</span><span class="hl-1">();</span><br/><span class="hl-1">  </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-14">A1</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-7">Cell</span><span class="hl-1">(</span><span class="hl-6">worksheet</span><span class="hl-1">, </span><span class="hl-5">&quot;A1&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-1">  </span><span class="hl-14">A1</span><span class="hl-1">.</span><span class="hl-7">setValue</span><span class="hl-1">(</span><span class="hl-16">1</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-14">A1</span><span class="hl-1">.</span><span class="hl-7">updateAllValues</span><span class="hl-1">(); </span><span class="hl-0">// explanation below</span><br/><span class="hl-1">  </span><span class="hl-7">expect</span><span class="hl-1">(</span><span class="hl-14">A1</span><span class="hl-1">.</span><span class="hl-7">getValue</span><span class="hl-1">()).</span><span class="hl-7">toBe</span><span class="hl-1">(</span><span class="hl-16">1</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-7">expect</span><span class="hl-1">(</span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-7">Cell</span><span class="hl-1">(</span><span class="hl-6">worksheet</span><span class="hl-1">, </span><span class="hl-5">&quot;A1&quot;</span><span class="hl-1">)).</span><span class="hl-7">toBe</span><span class="hl-1">(</span><span class="hl-16">1</span><span class="hl-1">); </span><span class="hl-0">// the new instance retrieves the new value of A1</span><br/><span class="hl-1">})</span>
+</code><button>Copy</button></pre>
+<p>To simulate an Excel worksheet, there&#39;s a global bidimensionnal array (of either strings or numbers) in setup.ts.<br>When <code>CellInstance.setValue(x)</code> is called, the internal Excel.Range object is updated, but only locally.<br>To update the global array, one needs to call <code>CellInstance.updateAllValues()</code> if manipulating a <code>Cell</code> instance, or <code>ExcelRangeInstance.updateAllValues()</code> when directly using <code>Excel.Range</code> (<code>Cell</code> performs updating by calling <code>Excel.Range</code>&#39;s mock method).<br>Note: Forgetting to call <code>.updateAllValues()</code> before an assertion is very likely to make the test fail.  </p>
+<a id="md:requesting-an-api-and-dealing-with-cors" class="tsd-anchor"></a><h2><a href="#md:requesting-an-api-and-dealing-with-cors">Requesting an API and Dealing with CORS</a></h2><p>Using a web API implies making requests to a (maybe external) server.<br>For security reasons, most web browsers prevents a script (JavaScript or TypeScript backend) from requesting an external URL (an URL which is not in the same machine as the script).<br>Whatever server it is, that means the owner didn&#39;t enable CORS, intentionally or not (if not, one should contact him).<br>Useful resources :</p>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">Mozilla documentation</a></li>
+<li><a href="https://enable-cors.org/server.html">Setting up CORS on the most common servers</a></li>
+</ul>
+<a id="md:common-errors-and-how-to-fix-them" class="tsd-anchor"></a><h2><a href="#md:common-errors-and-how-to-fix-them">Common Errors and How to Fix Them</a></h2><a id="md:how-to-completely-reset-and-reload-an-add-in--" class="tsd-anchor"></a><h3><a href="#md:how-to-completely-reset-and-reload-an-add-in--">How to Completely Reset and Reload an Add-In ? <a id="reset-add-in"></a></a></h3><p>Excel in the browser makes debugging harder, as it shows cryptic errors quite often, but many of them aren&#39;t related to the add-in&#39;s code.<br>While the reason why these errors are triggered isn&#39;t clear, it&#39;s luckily straightforward to suppress them.  </p>
+<ul>
+<li>Browser-only : Clear website cookies and data (example on Firefox) <img src="assets/doc//sharepoint%20clear%20cookies%20and%20data.png" alt="Near URL bar, click on the locker and then 'Clear cookies and site data'."></li>
+<li>Kill all instances of the server</li>
+<li><ul>
+<li>Linux : <code>killall webpack</code></li>
+</ul>
+</li>
+<li><ul>
+<li>Windows : <code>taskkill /f /im node.exe</code></li>
+</ul>
+</li>
+<li>Start again webpack using <code>npm start[:web]</code></li>
+</ul>
+<a id="md:cannot-access-manifest-url-at-https1270013000manifestxml-please-ensure-the-url-is-accessible" class="tsd-anchor"></a><h3><a href="#md:cannot-access-manifest-url-at-https1270013000manifestxml-please-ensure-the-url-is-accessible"><code>Cannot access manifest URL at https://127.0.0.1:3000/manifest.xml. Please ensure the url is accessible</code></a></h3><p>This error usually shows up due to a misconfiguration of webpack.<br>Check the existence of <code>Access-Control-Allow-Origin</code> and if the server is running on port 3000.  </p>
+<pre><code class="language-js"><span class="hl-0">// webpack.config.js</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-14">urlDev</span><span class="hl-1"> = </span><span class="hl-5">&quot;https://localhost:3000/&quot;</span><span class="hl-1">;</span><br/><span class="hl-1">...</span><br/><span class="hl-15">module</span><span class="hl-1">.</span><span class="hl-15">exports</span><span class="hl-1"> = </span><span class="hl-3">async</span><span class="hl-1"> (</span><span class="hl-6">env</span><span class="hl-1">, </span><span class="hl-6">options</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  ...</span><br/><span class="hl-1">  </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-14">config</span><span class="hl-1"> = {</span><br/><span class="hl-1">    ...</span><br/><span class="hl-1">    </span><span class="hl-6">devServer</span><span class="hl-1">: {</span><br/><span class="hl-1">      ...</span><br/><span class="hl-1">      </span><span class="hl-6">headers</span><span class="hl-1">: {</span><br/><span class="hl-1">        </span><span class="hl-5">&quot;Access-Control-Allow-Origin&quot;</span><span class="hl-6">:</span><span class="hl-1"> </span><span class="hl-5">&quot;*&quot;</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span>
+</code><button>Copy</button></pre>
+<a id="md:currentupdate-is-undefined" class="tsd-anchor"></a><h3><a href="#md:currentupdate-is-undefined"><code>currentUpdate is undefined</code></a></h3><img src="assets/doc//error%20currentUpdate%20is%20undefined.png" alt="Error traceback">
+
+<p>This one sometimes happens when modifying a source file and then saving it : most of the time all works fine, webpack rebuilds and Excel doesn&#39;t complain, but the rest of the time it fails with this.<br>It seems to mean that Excel hadn&#39;t correctly loaded everything, so just refresh the page, and if it doesn&#39;t fix that, <a href="#reset-add-in">follow these instructions</a>.  </p>
+<a id="md:my-add-in-is-displayed-multiple-times-" class="tsd-anchor"></a><h3><a href="#md:my-add-in-is-displayed-multiple-times-">My Add-In is Displayed Multiple Times !</a></h3><p>That&#39;s just an artifact which doesn&#39;t impact the code.<br>A <a href="#reset-add-in">complete reset</a> is needed to fix this.  </p>
+<a id="md:another-error-shows-up-but-doesn39t-seem-related-to-my-code-" class="tsd-anchor"></a><h3><a href="#md:another-error-shows-up-but-doesn39t-seem-related-to-my-code-">Another Error Shows up but Doesn&#39;t Seem Related to my Code !</a></h3><p>Check once more if your code is ok, then <a href="#reset-add-in">reset the add-in</a>.<br>If it breaks again, it&#39;s probably your fault, but if you think not, go to <a href="https://github.com/OfficeDev/Excel-Custom-Functions/issues">Github issues</a> to look for information or create an issue.  </p>
+<a id="md:go-back-to-top" class="tsd-anchor"></a><h3><a href="#md:go-back-to-top"><a href="#top">Go back to top</a></a></h3><a id="md:generic-readme-by-microsoft-" class="tsd-anchor"></a><h1><a href="#md:generic-readme-by-microsoft-">Generic README by Microsoft <a id="Microsoft-README"></a></a></h1><br>
+
+<a id="md:custom-functions-in-excel" class="tsd-anchor"></a><h2><a href="#md:custom-functions-in-excel">Custom functions in Excel</a></h2><p>Custom functions enable you to add new functions to Excel by defining those functions in JavaScript as part of an add-in. Users within Excel can access custom functions just as they would any native function in Excel, such as <code>SUM()</code>.  </p>
+<p>This repository contains the source code used by the <a href="https://github.com/OfficeDev/generator-office">Yo Office generator</a> when you create a new custom functions project. You can also use this repository as a sample to base your own custom functions project from if you choose not to use the generator. For more detailed information about custom functions in Excel, see the <a href="https://docs.microsoft.com/office/dev/add-ins/excel/custom-functions-overview">Custom functions overview</a> article in the Office Add-ins documentation or see the <a href="#additional-resources">additional resources</a> section of this repository.</p>
+<a id="md:debugging-custom-functions" class="tsd-anchor"></a><h3><a href="#md:debugging-custom-functions">Debugging custom functions</a></h3><p>This template supports debugging custom functions from <a href="https://code.visualstudio.com/">Visual Studio Code</a>. For more information see <a href="https://aka.ms/custom-functions-debug">Custom functions debugging</a>. For general information on debugging task panes and other Office Add-in parts, see <a href="https://docs.microsoft.com/office/dev/add-ins/testing/test-debug-office-add-ins">Test and debug Office Add-ins</a>.</p>
+<a id="md:questions-and-comments" class="tsd-anchor"></a><h3><a href="#md:questions-and-comments">Questions and comments</a></h3><p>We&#39;d love to get your feedback about this sample. You can send your feedback to us in the <em>Issues</em> section of this repository.</p>
+<p>Questions about Office Add-ins development in general should be posted to <a href="https://docs.microsoft.com/answers/questions/185087/questions-about-office-add-ins.html">Microsoft Q&amp;A</a>. If your question is about the Office JavaScript APIs, make sure it&#39;s tagged with [office-js-dev].</p>
+<a id="md:join-the-microsoft-365-developer-program" class="tsd-anchor"></a><h3><a href="#md:join-the-microsoft-365-developer-program">Join the Microsoft 365 Developer Program</a></h3><p>Get a free sandbox, tools, and other resources you need to build solutions for the Microsoft 365 platform.</p>
+<ul>
+<li><a href="https://developer.microsoft.com/microsoft-365/dev-program#Subscription">Free developer sandbox</a> Get a free, renewable 90-day Microsoft 365 E5 developer subscription.</li>
+<li><a href="https://developer.microsoft.com/microsoft-365/dev-program#Sample">Sample data packs</a> Automatically configure your sandbox by installing user data and content to help you build your solutions.</li>
+<li><a href="https://developer.microsoft.com/microsoft-365/dev-program#Experts">Access to experts</a> Access community events to learn from Microsoft 365 experts.</li>
+<li><a href="https://developer.microsoft.com/microsoft-365/dev-program#Recommendations">Personalized recommendations</a> Find developer resources quickly from your personalized dashboard.</li>
+</ul>
+<a id="md:additional-resources" class="tsd-anchor"></a><h3><a href="#md:additional-resources">Additional resources</a></h3><ul>
+<li><a href="https://docs.microsoft.com/office/dev/add-ins/excel/custom-functions-overview">Custom functions overview</a></li>
+<li><a href="https://docs.microsoft.com/office/dev/add-ins/excel/custom-functions-best-practices">Custom functions best practices</a></li>
+<li><a href="https://docs.microsoft.com/office/dev/add-ins/excel/custom-functions-runtime">Custom functions runtime</a></li>
+<li><a href="https://docs.microsoft.com/office/dev/add-ins/overview/office-add-ins">Office Add-ins documentation</a></li>
+<li>More Office Add-ins samples at <a href="https://github.com/officedev">OfficeDev on Github</a></li>
+</ul>
+<p>This project has adopted the <a href="https://opensource.microsoft.com/codeofconduct/">Microsoft Open Source Code of Conduct</a>. For more information, see the <a href="https://opensource.microsoft.com/codeofconduct/faq/">Code of Conduct FAQ</a> or contact <a href="mailto:opencode@microsoft.com">opencode@microsoft.com</a> with any additional questions or comments.</p>
+<a id="md:copyright" class="tsd-anchor"></a><h3><a href="#md:copyright">Copyright</a></h3><p>Copyright (c) 2019 Microsoft Corporation. All rights reserved.</p>
+<a id="md:go-back-to-top-1" class="tsd-anchor"></a><h3><a href="#md:go-back-to-top-1"><a href="#top">Go back to top</a></a></h3><a id="md:gitea-info-" class="tsd-anchor"></a><h2><a href="#md:gitea-info-">Gitea info <a id="gitea-info"></a></a></h2><p>This project was originally hosted on Gitea.<br><a href="https://github.com/go-gitea/gitea/issues/18592">[BUG] Gitea cannot use relative file links</a><br>One should use &lt;a&gt; instead of []() for relative paths.</p>
+<a id="md:go-back-to-top-2" class="tsd-anchor"></a><h3><a href="#md:go-back-to-top-2"><a href="#top">Go back to top</a></a></h3><a id="md:typedoc-info" class="tsd-anchor"></a><h2><a href="#md:typedoc-info">Typedoc info</a></h2><p><a href="doc">Documentation</a> is generated using <a href="https://typedoc.org/">typedoc</a>.<br>Some pieces of information about typedoc :
+*</p>
+</div></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -44,7 +189,63 @@
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><use href="#icon-checkbox"></use></svg><span>Inherited</span></label></li>
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><use href="#icon-checkbox"></use></svg><span>External</span></label></li></ul></form></div>
 <div class="tsd-theme-toggle">
-<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li>
+<ul>
+<li><a href="#md:-setup-office-add-in"><span> <wbr/>Setup <wbr/>Office <wbr/>Add-<wbr/>In</span></a></li>
+<li>
+<ul>
+<li><a href="#md:go-to-microsoft-auto-generated-readme"><span>Go to <wbr/>Microsoft auto-<wbr/>generated README</span></a></li>
+<li><a href="#md:gitea-doc"><span>Gitea doc</span></a></li>
+<li>
+<ul>
+<li><a href="#md:setup-hook"><span>Setup <wbr/>Hook</span></a></li></ul></li>
+<li><a href="#md:introduction-and-configuration"><span>Introduction and <wbr/>Configuration</span></a></li>
+<li><a href="#md:optional-step--creating-a-partition-for-testing-purposes-skip"><span>Optional <wbr/>Step : <wbr/>Creating a <wbr/>Partition for <wbr/>Testing <wbr/>Purposes (skip)</span></a></li>
+<li>
+<ul>
+<li><a href="#md:partition-requirements"><span>Partition <wbr/>Requirements</span></a></li>
+<li><a href="#md:creating-the-partition-linux--fdisk"><span>Creating the <wbr/>Partition (<wbr/>Linux + fdisk)</span></a></li>
+<li><a href="#md:creating-the-filesystem-linux--mkfs"><span>Creating the <wbr/>Filesystem (<wbr/>Linux + mkfs)</span></a></li></ul></li>
+<li><a href="#md:-generating-project-tree"><span> <wbr/>Generating <wbr/>Project <wbr/>Tree</span></a></li>
+<li><a href="#md:configuring-the-compiler"><span>Configuring the <wbr/>Compiler</span></a></li>
+<li><a href="#md:excel-javascript-api-reference"><span>Excel <wbr/>Java<wbr/>Script API <wbr/>Reference</span></a></li>
+<li><a href="#md:running-unit-tests"><span>Running <wbr/>Unit <wbr/>Tests</span></a></li>
+<li>
+<ul>
+<li><a href="#md:troubleshoot--referenceerror-office--excel-is-not-defined"><span>Troubleshoot : <wbr/>Reference<wbr/>Error: <wbr/>Office / <wbr/>Excel is not defined</span></a></li></ul></li>
+<li><a href="#md:more-on-unit-tests-and-mocks"><span>More on <wbr/>Unit <wbr/>Tests and <wbr/>Mocks</span></a></li>
+<li><a href="#md:requesting-an-api-and-dealing-with-cors"><span>Requesting an API and <wbr/>Dealing with CORS</span></a></li>
+<li><a href="#md:common-errors-and-how-to-fix-them"><span>Common <wbr/>Errors and <wbr/>How to <wbr/>Fix <wbr/>Them</span></a></li>
+<li>
+<ul>
+<li><a href="#md:how-to-completely-reset-and-reload-an-add-in--"><span>How to <wbr/>Completely <wbr/>Reset and <wbr/>Reload an <wbr/>Add-<wbr/>In ? </span></a></li>
+<li><a href="#md:cannot-access-manifest-url-at-https1270013000manifestxml-please-ensure-the-url-is-accessible"><span>Cannot access manifest URL at https://127.0.0.1:3000/manifest.xml. <wbr/>Please ensure the url is accessible</span></a></li>
+<li><a href="#md:currentupdate-is-undefined"><span>current<wbr/>Update is undefined</span></a></li>
+<li><a href="#md:my-add-in-is-displayed-multiple-times-"><span>My <wbr/>Add-<wbr/>In is <wbr/>Displayed <wbr/>Multiple <wbr/>Times !</span></a></li>
+<li><a href="#md:another-error-shows-up-but-doesn39t-seem-related-to-my-code-"><span>Another <wbr/>Error <wbr/>Shows up but <wbr/>Doesn&#39;t <wbr/>Seem <wbr/>Related to my <wbr/>Code !</span></a></li>
+<li><a href="#md:go-back-to-top"><span>Go back to top</span></a></li></ul></li></ul></li>
+<li><a href="#md:generic-readme-by-microsoft-"><span>Generic README by <wbr/>Microsoft </span></a></li>
+<li>
+<ul>
+<li><a href="#md:custom-functions-in-excel"><span>Custom functions in <wbr/>Excel</span></a></li>
+<li>
+<ul>
+<li><a href="#md:debugging-custom-functions"><span>Debugging custom functions</span></a></li>
+<li><a href="#md:questions-and-comments"><span>Questions and comments</span></a></li>
+<li><a href="#md:join-the-microsoft-365-developer-program"><span>Join the <wbr/>Microsoft 365 <wbr/>Developer <wbr/>Program</span></a></li>
+<li><a href="#md:additional-resources"><span>Additional resources</span></a></li>
+<li><a href="#md:copyright"><span>Copyright</span></a></li>
+<li><a href="#md:go-back-to-top-1"><span>Go back to top</span></a></li></ul></li>
+<li><a href="#md:gitea-info-"><span>Gitea info </span></a></li>
+<li>
+<ul>
+<li><a href="#md:go-back-to-top-2"><span>Go back to top</span></a></li></ul></li>
+<li><a href="#md:typedoc-info"><span>Typedoc info</span></a></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="index.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>excel-addin-template</span></a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base=".">

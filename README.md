@@ -1,5 +1,7 @@
 # <a id="top"></a> Setup Office Add-In
 ## [Go to Microsoft auto-generated README](#Microsoft-README)
+## [Gitea info](#gitea-info)
+## [Typedoc info](#typedoc-info)
 
 <br>
 
@@ -198,7 +200,7 @@ So for testing purposes, a minimal implementation of Excel is provided in [tests
 This mainly includes `Excel.Range` class, with a global bidimensionnal array acting as Excel worksheet.  
 Constants `EXCEL_ROWS_MAX` and `EXCEL_COLUMNS_MAX` are redefined in this file to speed up tests, and thus can be changed again according to the needs.  
 A minimal expression interpreter is provided, permitting to test expressions like `=A1+A2*A3+SQRT(A4)` (within the limits of what is implemented by Math.js).  
-Here's how looks unit tests using [setup.ts](../tests/setup/setup.ts) mocks :  
+Here's how looks unit tests using <a href="../tests/setup/setup.ts">setup.ts</a> mocks :  
 
 ```ts
 // tests/someTest.ts
@@ -327,5 +329,22 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 ### Copyright
 
 Copyright (c) 2019 Microsoft Corporation. All rights reserved.
+
+### [Go back to top](#top)
+
+## Gitea info <a id="gitea-info"></a>
+
+This project was originally hosted on Gitea.  
+[[BUG] Gitea cannot use relative file (not images) links](https://github.com/go-gitea/gitea/issues/18592)  
+One should use \<a\> instead of \[\]\(\) for relative paths.
+
+### [Go back to top](#top)
+
+## Typedoc info <a id="typedoc-info"></a>
+
+<a href="doc">Documentation</a> is generated using [typedoc](https://typedoc.org/).  
+Some pieces of information about typedoc :
+* Images aren't displayed, hence README is disabled in generated doc, but still remains in project root directory
+* Comments in <a href="./src/taskpane/taskpane.ts">taskpane.ts</a> doesn't seem to be detected (perhaps due to code in global namespace)
 
 ### [Go back to top](#top)
