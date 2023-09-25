@@ -196,11 +196,11 @@ Here the mock can be reinitialized or setup differently between tests.
 ## More on Unit Tests and Mocks
 
 As said previously, a mock is useful since it emulates an object, in this case because Excel API isn't available for testing.  
-So for testing purposes, a minimal implementation of Excel is provided in [tests/setup/setup.ts](../tests/setup/setup.ts).  
+So for testing purposes, a minimal implementation of Excel is provided in <a href="tests/setup/setup.ts"></a>.  
 This mainly includes `Excel.Range` class, with a global bidimensionnal array acting as Excel worksheet.  
 Constants `EXCEL_ROWS_MAX` and `EXCEL_COLUMNS_MAX` are redefined in this file to speed up tests, and thus can be changed again according to the needs.  
 A minimal expression interpreter is provided, permitting to test expressions like `=A1+A2*A3+SQRT(A4)` (within the limits of what is implemented by Math.js).  
-Here's how looks unit tests using <a href="../tests/setup/setup.ts">setup.ts</a> mocks :  
+Here's how looks unit tests using setup.ts mocks :  
 
 ```ts
 // tests/someTest.ts
@@ -336,7 +336,7 @@ Copyright (c) 2019 Microsoft Corporation. All rights reserved.
 
 This project was originally hosted on Gitea.  
 [[BUG] Gitea cannot use relative file (not images) links](https://github.com/go-gitea/gitea/issues/18592)  
-One should use \<a\> instead of \[\]\(\) for relative paths.
+One should use \<a\> instead of \[\]\(\) for relative paths, but it doesn't seem to work well for now.  
 
 ### [Go back to top](#top)
 
@@ -345,6 +345,6 @@ One should use \<a\> instead of \[\]\(\) for relative paths.
 <a href="doc">Documentation</a> is generated using [typedoc](https://typedoc.org/).  
 Some pieces of information about typedoc :
 * Images aren't displayed, hence README is disabled in generated doc, but still remains in project root directory
-* Comments in <a href="./src/taskpane/taskpane.ts">taskpane.ts</a> doesn't seem to be detected (perhaps due to code in global namespace)
+* Comments in <a href="src/taskpane/taskpane.ts"></a> doesn't seem to be detected (perhaps due to code in global namespace)
 
 ### [Go back to top](#top)
