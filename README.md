@@ -5,17 +5,22 @@
 
 <br>
 
-### Setup Hook
-
-To enable the commit message checking hook : `./hooks/setup.sh`.  
-<b>Important:</b> This script only can be executed in <ins>project root</ins> or <ins>hooks</ins> directory.  
-
-## Introduction and Configuration
+## Introduction
 
 Office suite (Excel, Word etc..) supports add-ins, either in web or app mode (app is Windows-only).  
 This document will explain how to create one, step by step.  
 A dual boot (Windows 10 / Ubuntu 22.04 LTS) was used but steps shouldn't be OS-dependant.  
 
+# Two Ways
+
+This tutorial shows how to directly start using this template : read below <ins>Setup</ins> section.  
+However, below sections are still worth to be read, as they explain important concepts.  
+
+## Setup
+
+Run `npm install` to download and setup dependencies.  
+To enable the both commit message checking and automatic documentation generation hooks : `./hooks/setup.sh`.  
+<b>Important:</b> This script only can be executed in <ins>project root</ins> or <ins>hooks</ins> directory.  
 
 ## Optional Step : Creating a Partition for Testing Purposes ([skip](#after-partition))
 
@@ -57,9 +62,10 @@ The partition is created but cannot be used until it has a filesystem :
 
 The partition is now ready.  
 
-## <a id="after-partition"></a> Generating Project Tree
+## Generating Project Tree <a id="after-partition"></a>
 
-Firstly, Node.js must be installed.
+Below sections will explain how to enhance Yeoman's generated project structure, to make it ready-to-use.  
+Firstly, Node.js must be installed.  
 Then Yeoman will be used to generate the project, it must be installed alongside Office add-in generator like this : `npm install -g yo generator-office`.  
 Run yeoman : `yo office` (no need to create the project directory by yourself, yeoman will do it).  
 It will let you choose between several project types : choose <ins>Excel Custom Functions using a Shared Runtime </ins>.  
