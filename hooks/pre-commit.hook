@@ -1,7 +1,7 @@
 #!/bin/bash
 
 npm run doc
-if (( $? != 0  )); then
+if (( $? != 0 )); then
 	echo "Documentation generation failed, commit aborted." 2> /dev/null
 	exit 1
 fi
