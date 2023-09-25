@@ -1,5 +1,5 @@
 # <a id="top"></a> Setup Office Add-In
-## [Go to Microsoft auto-generated README](#Microsoft-README)
+## [Go to Microsoft auto-generated README](#microsoft-readme)
 ## [Gitea info](#gitea-info)
 ## [Typedoc info](#typedoc-info)
 
@@ -289,7 +289,7 @@ If it breaks again, it's probably your fault, but if you think not, go to [Githu
 
 ### [Go back to top](#top)
 
-# Generic README by Microsoft <a id="Microsoft-README"></a>
+# Generic README by Microsoft <a id="microsoft-readme"></a>
 
 <br>
 
