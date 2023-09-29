@@ -76,6 +76,51 @@ Then comes the language (JavaScript or TypeScript), the project name and the app
 
 Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a taskpane and custom functions, whereas <ins>Office Add-in Task Pane project</ins> only provides a taskpane.  
 
+## Everything starts from `manifest.xml`
+
+The file <a href="manifest.xml">manifest.xml</a> describes the add-in and contains :
+* Layout
+* Titles and texts
+* Icons
+* Links between Excel and taskpane / custom functions
+* Other small details (locale, version, provider name ...)
+
+It's the <ins>very first file loaded by Excel</ins>, thus it must be valid.  
+As an example, I deliberately caused an error in it :  
+
+```xml
+<Hosts>
+    <Host Name="Workbook"/>
+<!-- I removed '</Hosts>' here -->
+```
+Here's what I got when trying to start in web app :
+```
+Debugging is being started...
+App type: web
+Error: Unable to start debugging.
+Error: Unable to parse the manifest file: manifest.xml. 
+Error: Unexpected close tag
+Line: 117
+Column: 12
+Char: >
+```
+
+`npm run validate` is a command to check whether the manifest is valid or not. That command is automatically ran before starting debugging, and aborts if fails.  
+So the above output is is what displays `npm run validate` with this wrong manifest.  
+Here's what happens when forcing the upload of a bad manifest directly in Excel web UI :  
+<img src="assets/doc/error%20your%20add-in%20manifest%20is%20not%20valid.png" alt="ERROR - Your add-in manifest is not valid.">
+
+A complete reference of the manifest is available [here](https://learn.microsoft.com/en-us/javascript/api/manifest?view=common-js-preview).  
+
+### A word about icons <a id="a-word-about-icons"></a>
+
+Even if `npm run validate` seems efficient, icons are not correctly handled and checked as it should be.  
+[Microsoft documentation](https://learn.microsoft.com/en-us/javascript/api/manifest/icon?view=common-js-preview#image) states :
+> The size attribute indicates the size in pixels of the image. Three image sizes are required (16, 32, and 80 pixels) while five other sizes are supported (20, 24, 40, 48, and 64 pixels).
+Although the documentation list only 5 other supported sizes, there may probably be more, as Yeoman generated a manifest with a 128px-wide icon.  
+Thus if you need another size, I recommend you to try and see it both Excel web and desktop app support it.  
+Messing with icons requirements <ins>will</ins> lead to an error in desktop app (see [here](#this-add-in-no-longer-available)), but the web version won't complain.  
+
 ## Configuring the Compiler
 
 ```typescript
@@ -91,6 +136,11 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a t
 
 ## [Excel JavaScript API Reference](https://learn.microsoft.com/en-us/office/dev/add-ins/reference/overview/excel-add-ins-reference-overview)
 
+## Portability
+
+As shown [here](#a-word-about-icons), Excel web has some non-standard behaviors regarding the official documentation, whereas the desktop app seems to be pedantic and fully standard-compliant.  
+Same thing if it must run on mobile devices, there may be extra requirements to fulfill.  
+
 ## Running Unit Tests
 
 `npm install --save-dev jest @types/jest ts-jest`  
@@ -98,7 +148,7 @@ Note: <ins>Excel Custom Functions using a Shared Runtime</ins> provides both a t
 * `ts-jest` : Typescript support  
 * `@types/jest` or `@jest/globals` : Functions (`test`, `expect` etc..).   
   Note that you need to import them when using `@jest/globals`, but not with `@types/jest`.  
-  Note that `@types/jest` may not be up-to-date (but still very recent), contrary to `@jest/globals` which is the latest version.
+  Note that `@types/jest` may not be up-to-date (but still very recent), contrary to `@jest/globals` which is the latest version.  
 
 ```typescript
 // jest.config.json
@@ -288,6 +338,42 @@ It seems to mean that Excel hadn't correctly loaded everything, so just refresh 
 
 That's just an artifact which doesn't impact the code.  
 A [complete reset](#reset-add-in) is needed to fix this.  
+
+### `ADD-IN ERROR : This add-in is no longer available` <a id="this-add-in-no-longer-available"></a>
+
+This error only seems to appear in the Windows desktop app, and indicates something wrong in <ins>manifest.xml</ins>.  
+Try `npm run validate` to see whether or not your manifest is valid, and, of course, fix it if broken.  
+However, things can get way more tricky when the previous command considers your manifest as valid, but the app doesn't.  
+I guess there may be multiple ways to mess in the manifest and end up in this unpleasant situation, but I only found one way to do so.  
+<a href="manifest.xml">manifest.xml</a> contains information about icons :
+
+```xml
+<!-- This section appears twice. -->
+<Icon>
+  <bt:Image size="16" resid="Icon.16x16"/>
+  <bt:Image size="32" resid="Icon.32x32"/>
+  <bt:Image size="64" resid="Icon.64x64"/>
+  <bt:Image size="80" resid="Icon.80x80"/>
+  <bt:Image size="128" resid="Icon.128x128"/>
+  <bt:Image size="300" resid="Icon.300x300"/>
+</Icon>
+
+<!-- And this one only once. -->
+<bt:Images>
+  <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
+  <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
+  <bt:Image id="Icon.64x64" DefaultValue="https://localhost:3000/assets/icon-64.png"/>
+  <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+  <bt:Image id="Icon.128x128" DefaultValue="https://localhost:3000/assets/icon-128.png"/>
+  <bt:Image id="Icon.300x300" DefaultValue="https://localhost:3000/assets/icon-300.png"/>
+</bt:Images>
+```
+
+As said earlier, the 300px icon wasn't in the generated project, so it's not mandatory at all, but 16, 32 and 80 are (see [here](#a-word-about-icons)).  
+I came across this problem just because I removed some of these, as I didn't use them, and luckily I only made a few changes compared to the working template.  
+Unfortunately there's no magic, the only way to find what change Excel didn't like it to revert them all, one by one, until it works again.  
+I strongly recommend to make a copy of your project into a temporary directory to avoid mistakes.  
+I also wrote an answer on [StackOverflow](https://stackoverflow.com/questions/38689643/office-js-this-add-in-is-no-longer-available-error) about this problem.  
 
 ### Another Error Shows up but Doesn't Seem Related to my Code !
 
