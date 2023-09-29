@@ -1,4 +1,5 @@
 # <a id="top"></a> Setup Office Add-In
+## [Go to Useful Links](#useful-links-link)
 ## [Go to Microsoft auto-generated README](#microsoft-readme)
 ## [Gitea info](#gitea-info-link)
 ## [Typedoc info](#typedoc-info-link)
@@ -134,8 +135,6 @@ Messing with icons requirements <ins>will</ins> lead to an error in desktop app 
     }
 }
 ```
-
-## [Excel JavaScript API Reference](https://learn.microsoft.com/en-us/office/dev/add-ins/reference/overview/excel-add-ins-reference-overview)
 
 ## Portability
 
@@ -380,6 +379,13 @@ I also wrote an answer on [StackOverflow](https://stackoverflow.com/questions/38
 
 Check once more if your code is ok, then [reset the add-in](#reset-add-in).  
 If it breaks again, it's probably your fault, but if you think not, go to [Github issues](https://github.com/OfficeDev/Excel-Custom-Functions/issues) to look for information or create an issue.  
+
+## Useful Links <a id="useful-links-link"></a>
+
+* [Office add-ins documentation](https://learn.microsoft.com/en-us/office/dev/add-ins/)
+* [Excel JavaScript API overview](https://hongbo-miao.gitbooks.io/excel/content/tutorial/excel-add-ins-javascript-programming-overview.html)
+* [Excel JavaScript API reference](https://learn.microsoft.com/en-us/office/dev/add-ins/reference/overview/excel-add-ins-reference-overview)
+* [object.load nested properties (a.b.c)](https://stackoverflow.com/questions/48634531/how-to-avoid-too-many-context-loads-in-office-js)
 
 ### [Go back to top](#top)
 
