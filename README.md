@@ -118,6 +118,7 @@ Even if `npm run validate` seems efficient, icons are not correctly handled and 
 [Microsoft documentation](https://learn.microsoft.com/en-us/javascript/api/manifest/icon?view=common-js-preview#image) states :
 > The size attribute indicates the size in pixels of the image. Three image sizes are required (16, 32, and 80 pixels) while five other sizes are supported (20, 24, 40, 48, and 64 pixels).
 Although the documentation list only 5 other supported sizes, there may probably be more, as Yeoman generated a manifest with a 128px-wide icon.  
+
 Thus if you need another size, I recommend you to try and see it both Excel web and desktop app support it.  
 Messing with icons requirements <ins>will</ins> lead to an error in desktop app (see [here](#this-add-in-no-longer-available)), but the web version won't complain.  
 
