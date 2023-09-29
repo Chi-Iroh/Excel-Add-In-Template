@@ -1,7 +1,7 @@
 # <a id="top"></a> Setup Office Add-In
 ## [Go to Microsoft auto-generated README](#microsoft-readme)
-## [Gitea info](#gitea-info)
-## [Typedoc info](#typedoc-info)
+## [Gitea info](#gitea-info-link)
+## [Typedoc info](#typedoc-info-link)
 
 <br>
 
@@ -425,7 +425,7 @@ Copyright (c) 2019 Microsoft Corporation. All rights reserved.
 
 ### [Go back to top](#top)
 
-## Gitea info <a id="gitea-info"></a>
+## Gitea info <a id="gitea-info-link"></a>
 
 This project was originally hosted on Gitea.  
 [[BUG] Gitea cannot use relative file (not images) links](https://github.com/go-gitea/gitea/issues/18592)  
@@ -433,7 +433,7 @@ One should use \<a\> instead of \[\]\(\) for relative paths, but it doesn't seem
 
 ### [Go back to top](#top)
 
-## Typedoc info <a id="typedoc-info"></a>
+## Typedoc info <a id="typedoc-info-link"></a>
 
 <a href="doc">Documentation</a> is generated using [typedoc](https://typedoc.org/).  
 Some pieces of information about typedoc :
