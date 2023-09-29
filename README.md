@@ -383,6 +383,7 @@ If it breaks again, it's probably your fault, but if you think not, go to [Githu
 ## Useful Links <a id="useful-links-link"></a>
 
 * [Office add-ins documentation](https://learn.microsoft.com/en-us/office/dev/add-ins/)
+* [Office add-ins documentation (Microsoft GitHub repo)](https://github.com/OfficeDev/office-js-docs-pr/tree/main/docs)
 * [Excel JavaScript API overview](https://hongbo-miao.gitbooks.io/excel/content/tutorial/excel-add-ins-javascript-programming-overview.html)
 * [Excel JavaScript API reference](https://learn.microsoft.com/en-us/office/dev/add-ins/reference/overview/excel-add-ins-reference-overview)
 * [object.load nested properties (a.b.c)](https://stackoverflow.com/questions/48634531/how-to-avoid-too-many-context-loads-in-office-js)
