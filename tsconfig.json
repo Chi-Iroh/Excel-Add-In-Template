@@ -6,6 +6,7 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "downlevelIteration": true,
     "jsx": "react",
     "noEmitOnError": true,
     "outDir": "lib",
