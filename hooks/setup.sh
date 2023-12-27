@@ -8,7 +8,9 @@ if [[ "$(basename $(pwd))" != "hooks" ]]; then      # must execute this script i
     cd ./hooks/
 fi
 
-for hook in $(find -mindepth 1 -not -name "setup.sh"); do   # mindepth to prevent find from displaying '.'
-    ln -fT "./$hook" "../.git/hooks/$hook"                  # linking the hook in git directory
-    echo "Hook '$(basename $hook)' setup."
+for hook in $(find -name "*.hook"); do
+    chmod +x "$hook"
+    basename="$(basename -s .hook $hook)"
+    ln -fT "./$hook" "../.git/hooks/$basename" # linking the hook in git directory
+    echo "Hook '$basename' setup."
 done
