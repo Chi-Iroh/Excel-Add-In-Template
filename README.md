@@ -186,6 +186,7 @@ Here comes `webpack` : it's a local server which deploys built files on localhos
     "compilerOptions": {
         "strict": true,     // More type-checking
         "forceConsistentCasingInFileNames": true,   // Some OSes (like Windows) treat lowercase and uppercase characters in the same way, this option forces to use the exact name and casing for compatibility purposes.
+        "downlevelIteration": true,   // Will generate more portable JavaScript code, for older versions
         ...
     }
 }
