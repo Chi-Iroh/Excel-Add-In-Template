@@ -645,7 +645,7 @@ The 3 original images are kept in the repository.
 <a href="doc">Documentation</a> is generated using [typedoc](https://typedoc.org/).  
 Some pieces of information about typedoc :
 * Images aren't displayed, hence README is disabled in generated doc, but still remains in project root directory
-* Comments in <a href="src/taskpane/taskpane.ts">src/taskpane/taskpane.ts</a> doesn't seem to be detected (perhaps due to code in global namespace)
+* Comments in <a href="src/taskpane/taskpane.ts">src/taskpane/taskpane.ts</a> don't seem to be detected (perhaps due to code in global namespace)
 
 ### [Go back to top](#top)
 
